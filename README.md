@@ -4,9 +4,15 @@
 安装：
 
 $ git clone https://github.com/Luomin1993/ForgottenHope.git
+
 $ cd ForgottenHope
+
 $ g++  -std=c++11  -L. -lthostmduserapi -lthosttraderapi -c TickToKlineHelper.cpp
+
 $ cd St_DawnPeep
+
 $ make
+
 $ chmod 777 exe
+
 $ ./exe
