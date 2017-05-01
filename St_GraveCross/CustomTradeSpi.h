@@ -11,7 +11,8 @@
 #include <string>
 #include <unordered_map>
 #include <mutex>
-
+#include <algorithm>
+#include <numeric>
 
 // ---- 全局参数声明 ---- //
 extern TThostFtdcBrokerIDType gBrokerID;                      // 模拟经纪商代码
@@ -204,12 +205,12 @@ public:
             int NOW_NUM = 0;
             double CrossStyle = 0.3;
             //计算均值；
-            double sum100  = std::accumulate(std::begin(priceVec)-99, std::end(priceVec), 0.0);  
+            double sum100  = accumulate(std::begin(priceVec)-99, std::end(priceVec), 0.0);  
             double mean100 =  sum100 / priceVec.size(); //均值
-            double sum20   = std::accumulate(std::end(priceVec)-19, std::end(priceVec), 0.0);  
+            double sum20   = accumulate(std::end(priceVec)-19, std::end(priceVec), 0.0);  
             double mean20  =  sum20 / 20; //均值   
             //买入条件：当且仅当10时间单位均线大于100时间单位均线的前提下，当前时间单位收盘突破此前50时间单位的最高点时做多；
-            if (priceVec[len - 1] >=  *std::max_element(m_priceVec[len-49], m_priceVec[len-2]) && mean100 >= mean20 )
+            if (priceVec[len - 1] >=  *max_element(priceVec.end()-49, priceVec.end()- 1) && mean100 >= mean20 )
             {    
                 reqOrderInsert(instrumentID, priceVec[len - 1], BUY_NUM, THOST_FTDC_D_Buy);
                 NOW_NUM += BUY_NUM;
