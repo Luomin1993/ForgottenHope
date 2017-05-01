@@ -22,9 +22,11 @@ public:
 	void KLineFromLocalData(const std::string &sFilePath, const std::string &dFilePath); 
 	// 从实时数据构建k线
 	void KLineFromRealtimeData(CThostFtdcDepthMarketDataField *pDepthMarketData);
+	void KLineDefineTime(CThostFtdcDepthMarketDataField *pDepthMarketData,double time);
 public:
 	std::vector<double> m_priceVec; // 存储1分钟的价格
 	std::vector<int> m_volumeVec; // 存储1分钟的成交量
 	std::vector<KLineDataType> m_KLineDataArray;
+	std::vector<KLineDataType> m_KLineDataArrayDefined;
 };
 

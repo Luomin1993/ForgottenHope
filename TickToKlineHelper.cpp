@@ -103,3 +103,24 @@ void TickToKlineHelper::KLineFromRealtimeData(CThostFtdcDepthMarketDataField *pD
 	}
 }
 
+void TickToKlineHelper::KLineDefineTime(CThostFtdcDepthMarketDataField *pDepthMarketData,double time)
+{
+	TimeKDataLineNum = 2*time; //time：即自定义提取K线的时间区间大小，单位秒;
+	m_priceVec.push_back(pDepthMarketData->LastPrice);
+	m_volumeVec.push_back(pDepthMarketData->Volume);
+	if (m_priceVec.size() == TimeKDataLineNum)
+	{
+		KLineDataType k_line_data;
+		k_line_data.open_price = m_priceVec.front();
+		k_line_data.high_price = *std::max_element(m_priceVec.cbegin(), m_priceVec.cend());
+		k_line_data.low_price = *std::min_element(m_priceVec.cbegin(), m_priceVec.cend());
+		k_line_data.close_price = m_priceVec.back();
+		// 成交量的真实的算法是当前区间最后一个成交量减去上去一个区间最后一个成交量
+		k_line_data.volume = m_volumeVec.back() - m_volumeVec.front();
+		m_KLineDataArrayDefined.push_back(k_line_data); // 此处可以存到内存
+
+		m_priceVec.clear();
+		m_volumeVec.clear();
+	}
+}
+

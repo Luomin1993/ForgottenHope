@@ -202,28 +202,23 @@ public:
             int lenK = KLineVec.size();
     		int BUY_NUM = 2;
     		int NOW_NUM = 0;
-    		double CrossStyle = 0.3;
+            double CrossStyle = 0.3;
     		//计算均值；
     		double sum100  = std::accumulate(std::begin(priceVec)-99, std::end(priceVec), 0.0);  
             double mean100 =  sum100 / priceVec.size(); //均值
             double sum20   = std::accumulate(std::end(priceVec)-19, std::end(priceVec), 0.0);  
             double mean20  =  sum20 / 20; //均值   
-    		//买入信号：看涨十字星
-    		if (priceVec[len - 1] < priceVec[len-2] && ( KLineVec[lenK-1].close_price > KLineVec[lenK-1].low_price && abs(KLineVec[lenK-1].close_price - KLineVec[lenK-1].open_price)<CrossStyle ) && mean100 >= mean20 )
+    		//买入条件：当且仅当10时间单位均线大于100时间单位均线的前提下，当前时间单位收盘突破此前50时间单位的最高点时做多；
+    		if (priceVec[len - 1] >=  *std::max_element(m_priceVec[len-49], m_priceVec[len-2]) && mean100 >= mean20 )
             {    
             	reqOrderInsert(instrumentID, priceVec[len - 1], BUY_NUM, THOST_FTDC_D_Buy);
             	NOW_NUM += BUY_NUM;
             }
-            //平仓条件：当小时收盘跌破此前25时间单位的最低点时平仓一半，跌破此前50时间单位最低点时全部平仓。
-            else if (priceVec[len - 1] < *std::min_element(m_priceVec[len-25], m_priceVec[len-2]) && NOW_NUM > 0)
-    		{
-    			reqOrderInsert(instrumentID, priceVec[len - 1], NOW_NUM/2, THOST_FTDC_D_Sell);
-    			NOW_NUM -= NOW_NUM/2;
-    		}
-    		else if (priceVec[len - 1] < *std::min_element(m_priceVec[len-50], m_priceVec[len-2]) && NOW_NUM > 0)
+            //平仓条件：蜻蜓十字线。
+            else if (abs(KLineVec[lenK-1].close_price - KLineVec[lenK-1].open_price)<CrossStyle && abs(KLineVec[lenK-1].close_price - KLineVec[lenK-1].low_price)/abs(KLineVec[lenK-1].high_price - KLineVec[lenK-1].open_price+0.01) > 2)
     		{
     			reqOrderInsert(instrumentID, priceVec[len - 1], NOW_NUM, THOST_FTDC_D_Sell);
-    			NOW_NUM  = 0;
+    			NOW_NUM -= NOW_NUM;
     		}
     	}
     }
