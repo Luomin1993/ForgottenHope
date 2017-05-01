@@ -105,7 +105,7 @@ void TickToKlineHelper::KLineFromRealtimeData(CThostFtdcDepthMarketDataField *pD
 
 void TickToKlineHelper::KLineDefineTime(CThostFtdcDepthMarketDataField *pDepthMarketData,double time)
 {
-	TimeKDataLineNum = 2*time; //time：即自定义提取K线的时间区间大小，单位秒;
+	int TimeKDataLineNum = 2*time; //time：即自定义提取K线的时间区间大小，单位秒;
 	m_priceVec.push_back(pDepthMarketData->LastPrice);
 	m_volumeVec.push_back(pDepthMarketData->Volume);
 	if (m_priceVec.size() == TimeKDataLineNum)
